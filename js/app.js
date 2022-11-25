@@ -156,7 +156,7 @@ class UI {
     addCartItem (cartItem) {
         const article = document.createElement('article');
         article.classList.add('cart-item');
-        article.innerHTML = `<img src="https:${cartItem.images[0]}" alt="${cartItem.title}">
+        article.innerHTML = `<img src="${cartItem.images[0]}" alt="${cartItem.title}">
                             <div>
                                 <h4>${cartItem.title}</h4>
                                 <p>$${cartItem.price}</p>
