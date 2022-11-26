@@ -7,6 +7,8 @@ const client = contentful.createClient({
 });
 // preloader
 const preloader = document.querySelector(".preloader");
+// cart-slider
+const cartSlider = document.querySelector(".cart-container .slider");
 // cart
 const cartOverlay = document.querySelector('.cart-overlay');
 const cartContent = document.querySelector('.cart-items');
@@ -26,6 +28,16 @@ const menuToggleBtn = document.querySelector('.nav-menu-toggle-btn');
 const sctollLinks = document.querySelectorAll('.scroll-link');
 // This value we will get dynamically
 let cartItems;
+
+/////////////////////////////////////// HELPER FUNCTIONS ///////////////////////////////////////
+
+const getSubarrays = (array, size) => {
+  let subarray = [];
+  for (let i = 0; i <Math.ceil(array.length/size); i++){
+      subarray[i] = array.slice((i*size), (i*size) + size);
+  }
+  return subarray;
+}
 
 /////////////////////////////////////// CLASS PRODUCTS ///////////////////////////////////////
 
@@ -147,11 +159,13 @@ class UI {
     checkEmptyCart () {
         if (!cartItems.length) {
             cartContent.innerHTML = '<div class="empty-cart">No items...</div>';
+            // cartSlider.innerHTML = "<span>No items in cart...</span>"
             return;
         } 
         const div = document.querySelector('.empty-cart');
         if (div) div.remove();
     } 
+
 
     addCartItem (cartItem) {
         const article = document.createElement('article');
@@ -172,6 +186,40 @@ class UI {
                                 </button>
                             </div>`;
         cartContent.append(article);
+
+
+        this.renderCartSlider();
+      }
+      
+
+    renderCartSlider() {
+      this.clearCartSlider();
+      // Set cart item to slider
+      getSubarrays(cartItems, 3).forEach(slideData => {
+        const slide = document.createElement("div");
+        slide.className = "slide"
+        slideData.forEach(item => {
+          const itemElement = document.createElement("div");
+          itemElement.className = "slide-product";
+
+          const img = document.createElement("img");
+          img.src = item.images[0];
+          img.alt = item.title;
+
+          itemElement.append(img);
+          slide.append(itemElement);
+        })
+        
+        cartSlider.querySelector(".slider-btns").before(slide);
+
+        cartSlider.querySelectorAll('.slide').forEach((slide, index) => slide.style.left = `${index * 100}%`);
+      })
+    }
+
+    clearCartSlider() {
+        Array.from(cartSlider.querySelectorAll(".slide")).forEach(el => {
+          el.remove();
+        })
     }
 
     removeCartItem (id) {
@@ -180,6 +228,7 @@ class UI {
         this.defineCartTotal();
         this.restoreProductBtn(id);
         Storage.saveCartItems(cartItems);
+        this.renderCartSlider();
     }
 
     restoreProductBtn (id) {
@@ -247,7 +296,7 @@ class UI {
         // Launch product info
         this.setProductInfo();  
         // Launch slider
-        this.setSlider();
+        this.setSliders();
         // Set year
         this.setYear();
     }
@@ -349,24 +398,30 @@ class UI {
         });
     }    
 
-    setSlider () {
-        const leftSliderBtn = document.querySelector('.left-slider-btn');
-        const rightSliderBtn = document.querySelector('.right-slider-btn');
-        const slides = document.querySelectorAll('.slide');
-        let slideStep = 0;
-        // Set slides positiones
-        slides.forEach((slide, index) => slide.style.left = `${index * 100}%`);
-        // Slider buttons listeners 
-        rightSliderBtn.addEventListener('click', () => {
-            slideStep++;
-            if (slideStep > slides.length - 1) slideStep = 0;
-            slides.forEach(slide => slide.style.transform = `translateX(-${slideStep * 100}%)`);
-        });
-        leftSliderBtn.addEventListener('click', () => {
-            slideStep--;
-            if (slideStep < 0) slideStep = slides.length - 1;
-            slides.forEach(slide => slide.style.transform = `translateX(-${slideStep * 100}%)`);
-        });        
+    setSliders () {
+        Array.from(document.querySelectorAll(".slider")).forEach(slider => {
+          const leftSliderBtn = slider.querySelector('.left-slider-btn');
+          const rightSliderBtn = slider.querySelector('.right-slider-btn');
+          const slides = slider.querySelectorAll('.slide');
+          let slideStep = 0;
+          // Set slides positiones
+          slides.forEach((slide, index) => slide.style.left = `${index * 100}%`);
+          // Slider buttons listeners 
+          rightSliderBtn.addEventListener('click', () => {
+              const slides = slider.querySelectorAll('.slide');
+              slides.forEach((slide, index) => slide.style.left = `${index * 100}%`);
+              slideStep++;
+              if (slideStep > slides.length - 1) slideStep = 0;
+              slides.forEach(slide => slide.style.transform = `translateX(-${slideStep * 100}%)`);
+            });
+            leftSliderBtn.addEventListener('click', () => {
+              const slides = slider.querySelectorAll('.slide');
+              slides.forEach((slide, index) => slide.style.left = `${index * 100}%`);
+              slideStep--;
+              if (slideStep < 0) slideStep = slides.length - 1;
+              slides.forEach(slide => slide.style.transform = `translateX(-${slideStep * 100}%)`);
+          });        
+        })
     }
 
     setYear () {
