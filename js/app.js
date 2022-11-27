@@ -206,7 +206,11 @@ class UI {
           img.src = item.images[0];
           img.alt = item.title;
 
+          const count = document.createElement("span");
+          count.innerHTML = item.amount;
+          
           itemElement.append(img);
+          itemElement.append(count);
           slide.append(itemElement);
         })
         
@@ -262,6 +266,7 @@ class UI {
             button.nextElementSibling.textContent = cartItem.amount;
             this.defineCartTotal();
             Storage.saveCartItems(cartItems);
+            this.renderCartSlider();
         }
         if (event.target.closest('.cart-item-decrease-btn')) {
             const button = event.target.closest('.cart-item-decrease-btn');
@@ -275,6 +280,7 @@ class UI {
             button.previousElementSibling.textContent = cartItem.amount;
             this.defineCartTotal();
             Storage.saveCartItems(cartItems);         
+            this.renderCartSlider();
         }
     }
 
