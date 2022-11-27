@@ -159,7 +159,6 @@ class UI {
     checkEmptyCart () {
         if (!cartItems.length) {
             cartContent.innerHTML = '<div class="empty-cart">No items...</div>';
-            // cartSlider.innerHTML = "<span>No items in cart...</span>"
             return;
         } 
         const div = document.querySelector('.empty-cart');
@@ -194,6 +193,16 @@ class UI {
 
     renderCartSlider() {
       this.clearCartSlider();
+
+      if (!cartItems.length) {
+        cartSlider.querySelector(".empty-message").classList.add("visible");
+        cartSlider.querySelector(".slider-btns").classList.remove("visible");
+        return;
+    }  else {
+        cartSlider.querySelector(".empty-message").classList.remove("visible");
+        cartSlider.querySelector(".slider-btns").classList.add("visible");
+      }
+
       // Set cart item to slider
       getSubarrays(cartItems, 3).forEach(slideData => {
         const slide = document.createElement("div");

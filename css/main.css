@@ -297,6 +297,22 @@ h1 {
     transition: var(--ease-transition);
 }
 
+.empty-message {
+    display: none;
+} 
+
+.empty-message.visible {
+    display: block;
+}
+
+.cart-container .slider-btns {
+    display: none;
+}
+
+.cart-container .slider-btns.visible {
+    display: flex;
+}
+
 
 /*********************************************** SECTION - PRODUCTS ***********************************************/
 
